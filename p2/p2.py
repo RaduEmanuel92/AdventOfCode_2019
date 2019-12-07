@@ -1,15 +1,18 @@
 #!/usr/bin/python3
-
-def add_gate(gravity_assist, idx1, idx2, idx3):
-    gravity_assist[idx3] =  gravity_assist[idx1] + gravity_assist[idx2]
+import sys 
 
 
-def prod_gate(gravity_assist, idx1, idx2, idx3):
-    gravity_assist[idx3] = gravity_assist[idx1] * gravity_assist[idx2]
+def add_gate(gravity_mem, idx1, idx2, idx3):
+    gravity_mem[idx3] =  gravity_mem[idx1] + gravity_mem[idx2]
 
 
-def exit_gate(gravity_assist):
-    print("[*] Found exit opcode, value is : {}".format(gravity_assist[0]))
+def prod_gate(gravity_mem, idx1, idx2, idx3):
+    gravity_mem[idx3] = gravity_mem[idx1] * gravity_mem[idx2]
+
+
+def exit_gate(gravity_mem):
+    print("[*] Found exit opcode, value is : {}".format(gravity_mem[0]))
+    return gravity_mem[0]
 
 
 def load_gravity_assist_program():
@@ -17,27 +20,35 @@ def load_gravity_assist_program():
     return [ int(x) for x in f]
 
 
-def opcode_map(gravity_assist, idx):
-    if gravity_assist[idx] == 1 :
-        add_gate(gravity_assist, gravity_assist[idx+1], gravity_assist[idx+2], gravity_assist[idx+3])
+def execute_instruction(gravity_mem):
+    output = -1
+    for instruction_pointer in range(0, len(gravity_mem) - 1, 4):
+        if gravity_mem[instruction_pointer] == 1 :
+            add_gate(gravity_mem, gravity_mem[instruction_pointer+1], gravity_mem[instruction_pointer+2], gravity_mem[instruction_pointer+3])
 
-    elif gravity_assist[idx] == 2: 
-        prod_gate(gravity_assist, gravity_assist[idx+1], gravity_assist[idx+2], gravity_assist[idx+3])       
+        elif gravity_mem[instruction_pointer] == 2: 
+            prod_gate(gravity_mem, gravity_mem[instruction_pointer+1], gravity_mem[instruction_pointer+2], gravity_mem[instruction_pointer+3])       
 
-    elif gravity_assist[idx] == 99:    
-        exit_gate(gravity_assist)
+        elif gravity_mem[instruction_pointer] == 99:    
+            output = exit_gate(gravity_mem)
+            break
 
+    return output
 
 
 def main():
     print("[+] Love you, {}".format("Hello World!"))
-    gravity_assist = load_gravity_assist_program()
-    print(gravity_assist)
-    for idx in range(0, len(gravity_assist) - 1, 4):
-        print("[+] Parsing opcode: {}".format(gravity_assist[idx]))
-        opcode_map(gravity_assist, idx)
+    output = 19690720
 
-
+    for noun in range(0, 100):
+        for verb in range(0, 100):
+            gravity_assist_mem = load_gravity_assist_program()
+            gravity_assist_mem[1] = noun
+            gravity_assist_mem[2] = verb
+            result =  execute_instruction(gravity_assist_mem)
+            if result == output:
+                print("[+] Found noun and verb, product: {}".format(str((100* noun)  + verb)))
+                return
 
 if __name__ == "__main__":
     main()
