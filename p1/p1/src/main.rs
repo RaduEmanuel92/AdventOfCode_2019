@@ -27,28 +27,28 @@ fn compute_mass(mass: i32) -> i32 {
 }
 
 fn fuel_partial_requirements(module_masses: &Vec<i32>)  -> i32 {
-    let mut total: i32 = 0;
+    let mut partial_fuel: i32 = 0;
 
     for mass in module_masses {
-        total += compute_mass(*mass);    
+        partial_fuel += compute_mass(*mass);    
     }
 
-   total
+    partial_fuel
 }
 
 fn fuel_final_requirements(module_masses: &Vec<i32>)  -> i32 {
-    let mut total:   i32 = 0;
-    let mut partial: i32 = 0;
+    let mut total_fuel:   i32 = 0;
+    let mut partial_fuel: i32 = 0;
 
     for mass in module_masses {
-        partial = compute_mass(*mass);
-        while partial > 0 {
-            total += partial;
-            partial = compute_mass(partial);
+        partial_fuel = compute_mass(*mass);
+        while partial_fuel > 0 {
+            total_fuel += partial_fuel;
+            partial_fuel = compute_mass(partial_fuel);
         }
     }
 
-   total
+    total_fuel
 }
 
 fn main() {
