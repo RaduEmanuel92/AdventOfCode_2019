@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Global front panel hash
+# Globals
 front_panel = {}
 signal1 = 0 
 signal2 = 0
@@ -14,7 +14,6 @@ class Coordinate(object):
 
     def getX(self):
         # Getter method for a Coordinate object's x coordinate.
-        # Getter methods are better practice than just accessing an attribute directly
         return self.x
 
     def getY(self):
@@ -25,7 +24,7 @@ class Coordinate(object):
         return '<' + str(self.getX()) + ',' + str(self.getY()) + '>'
     
 
-def read_wires():
+def parse_wires():
     return [ wire.strip('\n') for wire in open('./input', 'r').readlines() ]
 
 
@@ -57,6 +56,7 @@ def report_signal(coordinate, id_w):
 
 def increase_signal(idw):
     global signal1, signal2
+
     if idw == "w1":
         signal1 += 1
     else:
@@ -64,47 +64,47 @@ def increase_signal(idw):
 
 
 def mark_segment(curent_pos, segment, id_w):
-    # draw current segment starting from the last found point
+    # Draw current segment starting from the last found point
     direction = segment[0]
     length = int(''.join(segment[1:]))
 
     if direction == 'L':
         for unit in range(length):
             increase_signal(id_w)
-            current_position = Coordinate(curent_pos.getX() - unit, curent_pos.getY())
-            # Taint current position as part of the wire
-            taint_panel(str(current_position), id_w)
-            report_signal(str(current_position), id_w)
+            current_position = str(Coordinate(curent_pos.getX() - unit, curent_pos.getY()))
+            # Taint current position for each wire
+            taint_panel(current_position, id_w)
+            report_signal(current_position, id_w)
         # Correct last_pos    
         curent_pos.x -= length    
 
     elif direction == 'R':
         for unit in range(length):
             increase_signal(id_w)
-            current_position = Coordinate(curent_pos.getX() + unit, curent_pos.getY())
-            # Taint current position as part of the wire
-            taint_panel(str(current_position), id_w)
-            report_signal(str(current_position), id_w)
+            current_position = str(Coordinate(curent_pos.getX() + unit, curent_pos.getY()))
+            # Taint current position for each wire
+            taint_panel(current_position, id_w)
+            report_signal(current_position, id_w)
         # Correct last_pos    
         curent_pos.x += length 
 
     elif direction == 'U':
         for unit in range(length):
             increase_signal(id_w)
-            current_position = Coordinate(curent_pos.getX(), curent_pos.getY() + unit)
-            # Taint current position as part of the wire
-            taint_panel(str(current_position), id_w)
-            report_signal(str(current_position), id_w)
+            current_position = str(Coordinate(curent_pos.getX(), curent_pos.getY() + unit))
+            # Taint current position for each wire
+            taint_panel(current_position, id_w)
+            report_signal(current_position, id_w)
         # Correct last_pos    
         curent_pos.y += length 
 
     elif direction == 'D':
         for unit in range(length):
             increase_signal(id_w)
-            current_position = Coordinate(curent_pos.getX(), curent_pos.getY() - unit)
-            # Taint current position as part of the wire
-            taint_panel(str(current_position), id_w)
-            report_signal(str(current_position), id_w)
+            current_position = str(Coordinate(curent_pos.getX(), curent_pos.getY() - unit))
+            # Taint current position for each wire
+            taint_panel(current_position, id_w)
+            report_signal(current_position, id_w)
         # Correct last_pos    
         curent_pos.y -= length 
 
@@ -112,6 +112,7 @@ def mark_segment(curent_pos, segment, id_w):
 def draw(wire, id_w):
     # Reset current_pos when drawing new wire
     curent_pos = Coordinate(0, 0)
+
     for segment in wire.split(','):
         mark_segment(curent_pos,segment, id_w)
 
@@ -135,7 +136,7 @@ def intersect(panel):
 
 
 def main():
-    wires = read_wires()
+    wires = parse_wires()
     draw(wires[1], "w1")
     draw(wires[0], "w2")
     intersect(front_panel)
